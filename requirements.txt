@@ -6,3 +6,4 @@ seaborn
 pyrebase4
 prebase
 setuptools
+pkg_resources
