@@ -247,7 +247,7 @@ class EDA:
 
         # 3. 지역별 인구 변화량
         with tabs[2]:
-            st.header("🏙️ Population Change by Region (Last 5 Years)")
+            st.header("🏙️ 최근 5년 지역별 인구 변화량")
             year_range = sorted(df['연도'].unique())[-5:]
             df_recent = df[df['연도'].isin(year_range) & (df['지역'] != '전국')]
 
@@ -295,7 +295,7 @@ class EDA:
 
         # 5. 시각화
         with tabs[4]:
-            st.header("📊 Stacked Area Chart (Population by Region)")
+            st.header("📊 누적 영역 그래프 (지역별 인구)")
     
             # Pivot table for population by region over years
             df_area = df[df['지역'] != '전국'].pivot(index='연도', columns='지역', values='인구')
