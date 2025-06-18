@@ -247,22 +247,39 @@ class EDA:
 
         # 3. 지역별 인구 변화량
         with tabs[2]:
-            st.header("🏙️ 최근 5년 지역별 인구 변화량")
+            st.header("🏙️ Population Change by Region (Last 5 Years)")
             year_range = sorted(df['연도'].unique())[-5:]
             df_recent = df[df['연도'].isin(year_range) & (df['지역'] != '전국')]
-            df_pivot = df_recent.pivot(index='지역', columns='연도', values='인구')
-            df_pivot['변화량'] = df_pivot[year_range[-1]] - df_pivot[year_range[0]]
-            df_pivot['변화율'] = (df_pivot['변화량'] / df_pivot[year_range[0]]) * 100
 
+            # Translate region names to English
+            region_translation = {
+                '서울': 'Seoul', '부산': 'Busan', '대구': 'Daegu', '인천': 'Incheon',
+                '광주': 'Gwangju', '대전': 'Daejeon', '울산': 'Ulsan', '세종': 'Sejong',
+                '경기': 'Gyeonggi', '강원': 'Gangwon', '충북': 'Chungbuk', '충남': 'Chungnam',
+                '전북': 'Jeonbuk', '전남': 'Jeonnam', '경북': 'Gyeongbuk', '경남': 'Gyeongnam',
+                '제주': 'Jeju'
+            }
+            df_recent['지역'] = df_recent['지역'].map(region_translation)
+
+            # Pivot table for population changes
+            df_pivot = df_recent.pivot(index='지역', columns='연도', values='인구')
+            df_pivot['Change'] = df_pivot[year_range[-1]] - df_pivot[year_range[0]]
+            df_pivot['Change Rate'] = (df_pivot['Change'] / df_pivot[year_range[0]]) * 100
+
+            # Chart 1: Population Change (in people)
             fig1, ax1 = plt.subplots()
-            sns.barplot(x='변화량', y=df_pivot.index, data=df_pivot.reset_index(), ax=ax1)
-            ax1.set_xlabel("Change (in people)")
+            sns.barplot(x='Change', y=df_pivot.index, data=df_pivot.reset_index(), ax=ax1)
+            ax1.set_xlabel("Population Change (People)")
+            ax1.set_ylabel("Region")
             st.pyplot(fig1)
 
+            # Chart 2: Population Change Rate (%)
             fig2, ax2 = plt.subplots()
-            sns.barplot(x='변화율', y=df_pivot.index, data=df_pivot.reset_index(), ax=ax2)
-            ax2.set_xlabel("Change Rate (%)")
+            sns.barplot(x='Change Rate', y=df_pivot.index, data=df_pivot.reset_index(), ax=ax2)
+            ax2.set_xlabel("Population Change Rate (%)")
+            ax2.set_ylabel("Region")
             st.pyplot(fig2)
+
 
         # 4. 증감률 상위 지역/연도
         with tabs[3]:
