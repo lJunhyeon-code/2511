@@ -295,11 +295,25 @@ class EDA:
 
         # 5. 시각화
         with tabs[4]:
-            st.header("📊 누적 영역 그래프 (지역별 인구)")
+            st.header("📊 Stacked Area Chart (Population by Region)")
+    
+            # Pivot table for population by region over years
             df_area = df[df['지역'] != '전국'].pivot(index='연도', columns='지역', values='인구')
+            
+            # Translate region names to English
+            region_translation = {
+                '서울': 'Seoul', '부산': 'Busan', '대구': 'Daegu', '인천': 'Incheon',
+                '광주': 'Gwangju', '대전': 'Daejeon', '울산': 'Ulsan', '세종': 'Sejong',
+                '경기': 'Gyeonggi', '강원': 'Gangwon', '충북': 'Chungbuk', '충남': 'Chungnam',
+                '전북': 'Jeonbuk', '전남': 'Jeonnam', '경북': 'Gyeongbuk', '경남': 'Gyeongnam',
+                '제주': 'Jeju'
+            }
+            df_area.columns = df_area.columns.map(region_translation)
+    
+            # Create stacked area chart
             fig, ax = plt.subplots(figsize=(10, 6))
             df_area.plot.area(ax=ax)
-            ax.set_title("Population by Region (Area Chart)")
+            ax.set_title("Population by Region (Stacked Area Chart)")
             ax.set_xlabel("Year")
             ax.set_ylabel("Population")
             st.pyplot(fig)
